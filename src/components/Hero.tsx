@@ -1,44 +1,80 @@
-import React from 'react';
-import { Heart, Star } from 'lucide-react';
+import React from "react";
 
 const Hero = () => {
   return (
-    <section className=" flex flex-col items-center justify-center px-4 py-16 text-white text-center">
-      <div className="max-w-4xl mx-auto">
-        <div className="mb-8">
-          <Heart className="w-16 h-16 mx-auto mb-4 text-rose-gold animate-pulse" />
-          <h1 className="font-playfair text-5xl md:text-7xl font-bold mb-4">
-            KissYourCrush
-          </h1>
-          <p className="font-poppins text-xl md:text-2xl mb-6">
-            Make Your Fantasy Kiss Come True
-          </p>
-          <p className="text-lg opacity-90 mb-8">
-            World's Most Advanced AI Kiss Generator
-          </p>
-        </div>
+    <section className="p-4 ">
+      <div className="w-full max-w-3xl mx-auto overflow-hidden  rounded-[40px]">
+        <div 
+          className="relative min-h-[550px] p-8 flex flex-col items-center justify-center overflow-hidden"
+          style={{
+            borderRadius: '40px',
+          }}
+        >
+          {/* Background Video */}
+          <video 
+            autoPlay 
+            loop 
+            muted 
+            playsInline
+            className="absolute inset-0 w-full h-full object-cover z-0"
+            style={{
+              borderRadius: '40px',
+            }}
+          >
+            <source src="/bg.mp4" type="video/mp4" />
+          </video>
 
-        <button className="font-montserrat bg-rose-gold hover:bg-opacity-90 text-white px-12 py-4 rounded-full text-lg font-semibold shadow-lg transform hover:scale-105 transition-all">
-          Kiss somebody now
-        </button>
+          {/* Content Container with overlay */}
+          <div className="relative z-10 flex flex-col items-center justify-center w-full">
+            {/* Logo Section */}
+            <div className="flex items-center gap-3 mb-16">
+              <img 
+                src="/Kyclogo.png" 
+                alt="KissYourCrush Logo" 
+                className="h-12 object-contain"
+              />
+            </div>
 
-        <div className="grid grid-cols-3 gap-4 mt-16 max-w-2xl mx-auto">
-          <div className="text-center">
-            <p className="text-2xl font-bold">95%</p>
-            <p className="text-sm opacity-75">Accuracy</p>
+            {/* Main Content */}
+            <div className="text-center max-w-xl mx-auto mb-16">
+              <h1 
+                className="text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-4 leading-tight"
+              >
+                Bring your Dream
+                <br />
+                Kiss to Life
+              </h1>
+            </div>
+
+            {/* CTA Button */}
+            <div className="w-full max-w-md">
+              <button 
+                className="w-full bg-white text-black text-xl font-bold py-4 px-8 shadow-xl transition-all duration-300 hover:opacity-90"
+                style={{
+                  borderRadius: '24px',
+                }}
+              >
+                Try It Free
+              </button>
+            </div>
+
+            {/* Trial Text */}
+            <p className="text-white/60 mt-4 text-sm">
+              Trial applicable for 1 output
+            </p>
           </div>
-          <div className="text-center">
-            <p className="text-2xl font-bold">10K+</p>
-            <p className="text-sm opacity-75">Users</p>
-          </div>
-          <div className="text-center">
-            <p className="text-2xl font-bold">100%</p>
-            <p className="text-sm opacity-75">Private</p>
-          </div>
+
+          {/* Dark Overlay for better text visibility */}
+          <div 
+            className="absolute inset-0 bg-black/40 pointer-events-none" 
+            style={{ 
+              borderRadius: '40px',
+            }}
+          />
         </div>
       </div>
     </section>
   );
-}
+};
 
 export default Hero;

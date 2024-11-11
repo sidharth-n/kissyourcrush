@@ -7,7 +7,7 @@ import Footer from './components/Footer';
 
 function App() {
   return (
-    <div className="min-h-screen bg-gradient-to-b from-soft-pink via-deep-pink to-deep-purple">
+    <div className="min-h-screen ">
       <Hero />
       <ExamplesGallery />
       <UploadSection />
