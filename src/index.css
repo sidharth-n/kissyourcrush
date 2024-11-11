@@ -2,20 +2,22 @@
 @tailwind components;
 @tailwind utilities;
 
+
 @layer base {
   html {
-    font-family: 'Poppins', system-ui, sans-serif;
+    font-family: 'Plus Jakarta Sans', system-ui, sans-serif; /* Made consistent for readability */
   }
   
   h1, h2, h3, h4 {
-    font-family: 'Playfair Display', serif;
+    font-family: 'Plus Jakarta Sans', sans-serif; /* Changed 'serif' to 'sans-serif' for consistency */
   }
-  
+
   button {
-    font-family: 'Montserrat', sans-serif;
+    font-family: 'Plus Jakarta Sans', sans-serif;
   }
 }
 
+/* Gradient Background Classes */
 .gradient-bg {
   background: linear-gradient(135deg, #FFB6C1 0%, #FF69B4 50%, #9370DB 100%);
 }
@@ -24,6 +26,7 @@
   background: linear-gradient(135deg, #B76E79 0%, #E6BCB3 100%);
 }
 
+/* Hover Effect for Cards */
 .card-hover {
   transition: transform 0.2s ease-in-out;
 }
@@ -32,6 +35,7 @@
   transform: translateY(-4px);
 }
 
+/* Dropzone Styling */
 .dropzone {
   border: 2px dashed #FF69B4;
   animation: pulse 2s infinite;

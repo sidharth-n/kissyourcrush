@@ -5,7 +5,7 @@ const Hero = () => {
     <section className="p-4 ">
       <div className="w-full max-w-3xl mx-auto overflow-hidden  rounded-[40px]">
         <div 
-          className="relative min-h-[550px] p-8 flex flex-col items-center justify-center overflow-hidden"
+          className="relative min-h-[450px] p-8 flex flex-col items-center justify-center overflow-hidden"
           style={{
             borderRadius: '40px',
           }}
@@ -36,9 +36,9 @@ const Hero = () => {
             </div>
 
             {/* Main Content */}
-            <div className="text-center max-w-xl mx-auto mb-16">
+            <div className="text-center max-w-xl mx-auto mb-6">
               <h1 
-                className="text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-4 leading-tight"
+                className="text-2xl md:text-5xl lg:text-6xl font-bold text-white mb-2 mt-44 leading-tight"
               >
                 Bring your Dream
                 <br />
@@ -49,7 +49,7 @@ const Hero = () => {
             {/* CTA Button */}
             <div className="w-full max-w-md">
               <button 
-                className="w-full bg-white text-black text-xl font-bold py-4 px-8 shadow-xl transition-all duration-300 hover:opacity-90"
+                className="w-full bg-white text-black text-lg font-bold py-4 px-8 shadow-xl transition-all duration-300 hover:opacity-90"
                 style={{
                   borderRadius: '24px',
                 }}
@@ -59,7 +59,7 @@ const Hero = () => {
             </div>
 
             {/* Trial Text */}
-            <p className="text-white/60 mt-4 text-sm">
+            <p className="text-white/60 mt-4 text-xs font-thin">
               Trial applicable for 1 output
             </p>
           </div>
