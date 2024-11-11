@@ -1,7 +1,13 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, RefObject } from 'react';
 import { Play } from 'lucide-react';
 
-const examples = [
+// Define type for example items
+interface ExampleItem {
+  id: number;
+  image: string;
+}
+
+const examples: ExampleItem[] = [
   {
     id: 1,
     image: "https://images.unsplash.com/photo-1516589178581-6cd7833ae3b2?w=800",
@@ -24,15 +30,15 @@ const examples = [
   }
 ];
 
-const ExamplesGallery = () => {
-  const [activeIndex, setActiveIndex] = useState(1);
-  const scrollRef = useRef(null);
+const ExamplesGallery: React.FC = () => {
+  const [activeIndex, setActiveIndex] = useState<number>(1);
+  const scrollRef: RefObject<HTMLDivElement> = useRef(null);
 
   const handleScroll = () => {
     if (scrollRef.current) {
       const scrollContainer = scrollRef.current;
       const scrollLeft = scrollContainer.scrollLeft;
-      const itemWidth = scrollContainer.querySelector('.gallery-item').offsetWidth;
+      const itemWidth = scrollContainer.querySelector<HTMLDivElement>('.gallery-item')?.offsetWidth ?? 0;
       const newIndex = Math.round(scrollLeft / itemWidth);
       setActiveIndex(newIndex);
     }
@@ -42,7 +48,7 @@ const ExamplesGallery = () => {
   useEffect(() => {
     if (scrollRef.current) {
       const scrollContainer = scrollRef.current;
-      const itemWidth = scrollContainer.querySelector('.gallery-item').offsetWidth;
+      const itemWidth = scrollContainer.querySelector<HTMLDivElement>('.gallery-item')?.offsetWidth ?? 0;
       scrollContainer.scrollLeft = itemWidth - 40; // Adjust for the padding
     }
   }, []);
@@ -61,7 +67,7 @@ const ExamplesGallery = () => {
             onScroll={handleScroll}
             className="flex overflow-x-auto hide-scrollbar px-4"
             style={{ 
-              scrollbarWidth: 'none', 
+              scrollbarWidth: 'none',
               msOverflowStyle: 'none',
             }}
           >
@@ -119,4 +125,4 @@ const ExamplesGallery = () => {
   );
 };
 
-export default ExamplesGallery
+export default ExamplesGallery;

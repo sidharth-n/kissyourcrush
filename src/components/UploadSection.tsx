@@ -68,7 +68,7 @@ const UploadSection = () => {
   };
 
   return (
-    <section className="bg-gray-50 py-8 px-4">
+    <section className="bg-gray-550 py-8 px-4">
       <div className="max-w-xl mx-auto">
         {/* Photo Type Selection */}
         <div className="mb-8">
