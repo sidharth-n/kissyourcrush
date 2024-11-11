@@ -68,7 +68,7 @@ const UploadSection = () => {
   };
 
   return (
-    <section className="bg-gray-550 py-8 px-4">
+    <section className="bg-gray-100 py-8 px-4">
       <div className="max-w-xl mx-auto">
         {/* Photo Type Selection */}
         <div className="mb-8">
@@ -89,7 +89,7 @@ const UploadSection = () => {
             </button>
             <button
               onClick={() => handleModeChange('couple')}
-              className={`flex items-center gap-2 px-1 py-2 rounded-xl flex-1 border transition-all ${
+              className={`flex items-center gap-2 px-2 py-2 rounded-xl flex-1 border transition-all ${
                 uploadMode === 'couple'
                   ? 'bg-white shadow-lg border-transparent bg-gradient-to-r from-purple-500 via-pink-500 to-orange-500'
                   : 'bg-white border-gray-200'
@@ -112,7 +112,7 @@ const UploadSection = () => {
             <div className="grid grid-cols-2 gap-4">
               {/* First Solo Photo */}
               <div className="relative">
-                <div className="absolute -inset-[1px] rounded-2xl bg-gradient-to-r from-purple-500 via-pink-500 to-orange-500 opacity-50" />
+                <div className="absolute -inset-[1px] rounded-2xl bg-gradient-to-r opacity-80" />
                 <label
                   htmlFor="solo-photo-1"
                   className="relative block bg-white rounded-2xl border-2 border-dashed border-gray-200 cursor-pointer overflow-hidden"
@@ -154,7 +154,7 @@ const UploadSection = () => {
 
               {/* Second Solo Photo */}
               <div className="relative">
-                <div className="absolute -inset-[1px] rounded-2xl bg-gradient-to-r from-purple-500 via-pink-500 to-orange-500 opacity-50" />
+                <div className="absolute -inset-[1px] rounded-2xl  opacity-80" />
                 <label
                   htmlFor="solo-photo-2"
                   className="relative block bg-white rounded-2xl border-2 border-dashed border-gray-200 cursor-pointer overflow-hidden"
@@ -197,7 +197,7 @@ const UploadSection = () => {
           ) : (
             // Couple Photo Upload
             <div className="relative">
-              <div className="absolute -inset-[1px] rounded-2xl bg-gradient-to-r from-purple-500 via-pink-500 to-orange-500 opacity-50" />
+              <div className="absolute -inset-[1px] rounded-2xl  opacity-80" />
               <label
                 htmlFor="couple-photo"
                 className="relative block bg-white rounded-2xl border-2 border-dashed border-gray-200 cursor-pointer overflow-hidden"
