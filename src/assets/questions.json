@@ -1,0 +1,27 @@
+;[
+  {
+    id: 1,
+    text: "What is your favorite subject?",
+    options: ["Math", "Science", "History", "Art"],
+  },
+  {
+    id: 2,
+    text: "Do you enjoy working with computers?",
+    options: ["Yes", "No"],
+  },
+  {
+    id: 3,
+    text: "Do you prefer working in a team or alone?",
+    options: ["Team", "Alone"],
+  },
+  {
+    id: 4,
+    text: "What type of tasks do you enjoy?",
+    options: ["Analytical", "Creative", "Physical", "Managerial"],
+  },
+  {
+    id: 5,
+    text: "How do you handle stress?",
+    options: ["Stay Calm", "Get Anxious", "Work Harder", "Procrastinate"],
+  },
+]
