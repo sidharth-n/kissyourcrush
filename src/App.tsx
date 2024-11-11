@@ -1,9 +1,9 @@
-import React from 'react';
-import Hero from './components/Hero';
-import ExamplesGallery from './components/ExamplesGallery';
-import UploadSection from './components/UploadSection';
-import TrustSection from './components/TrustSection';
-import Footer from './components/Footer';
+import React from "react"
+import Hero from "./components/Hero"
+import ExamplesGallery from "./components/ExamplesGallery"
+import UploadSection from "./components/UploadSection"
+import TrustSection from "./components/TrustSection"
+import Footer from "./components/Footer"
 
 function App() {
   return (
@@ -14,7 +14,7 @@ function App() {
       <TrustSection />
       <Footer />
     </div>
-  );
+  )
 }
 
-export default App;
+export default App

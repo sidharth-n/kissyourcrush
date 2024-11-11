@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { Upload, X } from 'lucide-react';
+import React, { useState } from "react"
+import { Upload, X } from "lucide-react"
 
 const UploadSection = () => {
   const [uploadMode, setUploadMode] = useState<'solo' | 'couple'>('solo');
@@ -253,7 +253,7 @@ const UploadSection = () => {
         </button>
       </div>
     </section>
-  );
-};
+  )
+}
 
 export default UploadSection;

@@ -119,4 +119,4 @@ const ExamplesGallery = () => {
   );
 };
 
-export default ExamplesGallery;
+export default ExamplesGallery
