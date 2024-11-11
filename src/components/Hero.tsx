@@ -40,9 +40,9 @@ const Hero = () => {
               <h1 
                 className="text-2xl md:text-5xl lg:text-6xl font-bold text-white mb-2 mt-44 leading-tight"
               >
-                Bring your Dream
+                Wanna kiss your
                 <br />
-                Kiss to Life
+                fantasy crush ?
               </h1>
             </div>
 
