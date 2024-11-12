@@ -1,7 +1,8 @@
+// ExamplesGallery.tsx
 import React, { useState, useRef, useEffect, RefObject } from 'react';
 import { Play } from 'lucide-react';
+import { motion } from 'framer-motion';
 
-// Define type for example items
 interface ExampleItem {
   id: number;
   image: string;
@@ -44,71 +45,93 @@ const ExamplesGallery: React.FC = () => {
     }
   };
 
-  // Set initial scroll position to show second item
   useEffect(() => {
     if (scrollRef.current) {
       const scrollContainer = scrollRef.current;
       const itemWidth = scrollContainer.querySelector<HTMLDivElement>('.gallery-item')?.offsetWidth ?? 0;
-      scrollContainer.scrollLeft = itemWidth - 40; // Adjust for the padding
+      scrollContainer.scrollLeft = itemWidth - 40;
     }
   }, []);
 
   return (
-    <section className="bg-white py-8">
+    <motion.section 
+      initial={{ opacity: 0, y: 20 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      transition={{ delay: 2, duration: 1 }}
+      viewport={{ once: true }}
+      className="bg-white py-8"
+    >
       <div className="max-w-6xl mx-auto">
-        <h2 className="text-xl font-bold px-4 mb-4">
+        <motion.h2 
+          initial={{ opacity: 0, x: -20 }}
+          whileInView={{ opacity: 1, x: 0 }}
+          transition={{ delay: 2, duration: 1 }}
+          viewport={{ once: true }}
+          className="text-xl font-bold px-4 mb-4"
+        >
           Watch the Magic
-        </h2>
+        </motion.h2>
 
         <div className="relative">
-          {/* Gallery Container */}
           <div 
             ref={scrollRef}
             onScroll={handleScroll}
-            className="flex overflow-x-auto hide-scrollbar px-4"
-            style={{ 
-              scrollbarWidth: 'none',
-              msOverflowStyle: 'none',
-            }}
+            className="flex overflow-x-auto hide-scrollbar px-4 snap-x snap-mandatory"
+            style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
           >
-            {/* Add initial padding div to allow first item to be fully visible */}
             <div className="flex-none w-[20px]" />
             
             {examples.map((example, index) => (
-              <div
+              <motion.div
                 key={example.id}
-                className="gallery-item flex-none w-[280px] px-2"
+                initial={{ opacity: 0, scale: 0.9 }}
+                whileInView={{ opacity: 1, scale: 1 }}
+              
+                viewport={{ once: true }}
+                className="gallery-item flex-none w-[280px] px-2 snap-center"
               >
-                <div className="relative rounded-2xl overflow-hidden aspect-video">
+                <motion.div 
+                  whileHover={{ scale: 1.05 }}
+                  transition={{ duration: 0.2 }}
+                  className="relative rounded-2xl overflow-hidden aspect-video"
+                >
                   <img
                     src={example.image}
                     alt={`Example ${index + 1}`}
                     className="w-full h-full object-cover"
                   />
                   <div className="absolute inset-0 bg-black/30 flex items-center justify-center">
-                    <Play className="w-12 h-12 text-white" />
+                    <motion.div
+                      whileHover={{ scale: 1.2 }}
+                      whileTap={{ scale: 0.9 }}
+                    >
+                      <Play className="w-12 h-12 text-white" />
+                    </motion.div>
                   </div>
-                </div>
-              </div>
+                </motion.div>
+              </motion.div>
             ))}
             
-            {/* Add final padding div to allow last item to be fully visible */}
             <div className="flex-none w-[20px]" />
           </div>
 
-          {/* Pagination Dots */}
-          <div className="flex justify-center gap-2 mt-6">
+          <motion.div 
+            initial={{ opacity: 0, y: 10 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.4 }}
+            viewport={{ once: true }}
+            className="flex justify-center gap-2 mt-6"
+          >
             {examples.map((_, index) => (
-              <div
+              <motion.div
                 key={index}
                 className={`w-2 h-2 rounded-full transition-all duration-300 ${
-                  activeIndex === index 
-                    ? 'bg-deep-pink w-4' 
-                    : 'bg-gray-300'
+                  activeIndex === index ? 'bg-deep-pink w-4' : 'bg-gray-300'
                 }`}
+                whileHover={{ scale: 1.2 }}
               />
             ))}
-          </div>
+          </motion.div>
         </div>
       </div>
 
@@ -121,7 +144,7 @@ const ExamplesGallery: React.FC = () => {
           scrollbar-width: none;
         }
       `}</style>
-    </section>
+    </motion.section>
   );
 };
 

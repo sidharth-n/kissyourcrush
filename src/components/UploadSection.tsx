@@ -1,5 +1,7 @@
+// UploadSection.tsx
 import React, { useState } from "react"
 import { Upload, X } from "lucide-react"
+import { motion, AnimatePresence } from "framer-motion"
 
 const UploadSection = () => {
   const [uploadMode, setUploadMode] = useState<'solo' | 'couple'>('solo');
@@ -8,6 +10,7 @@ const UploadSection = () => {
   const [couplePhoto, setCouplePhoto] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
+  // Existing handlers remain the same
   const handleFileUpload = (
     e: React.ChangeEvent<HTMLInputElement>, 
     target: 'solo1' | 'solo2' | 'couple'
@@ -60,7 +63,6 @@ const UploadSection = () => {
 
   const handleGenerate = () => {
     setLoading(true);
-    // Simulating API call
     setTimeout(() => {
       setLoading(false);
       alert('Video generated successfully!');
@@ -68,13 +70,26 @@ const UploadSection = () => {
   };
 
   return (
-    <section className="bg-gray-100 py-8 px-4">
+    <motion.section
+      initial={{ opacity: 0, y: 20 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.6 }}
+      viewport={{ once: true }}
+      className="bg-gray-100 py-8 px-4"
+    >
       <div className="max-w-xl mx-auto">
-        {/* Photo Type Selection */}
-        <div className="mb-8">
+        <motion.div 
+          initial={{ opacity: 0, x: -20 }}
+          whileInView={{ opacity: 1, x: 0 }}
+          transition={{ delay: 0.2 }}
+          viewport={{ once: true }}
+          className="mb-8"
+        >
           <h2 className="text-xl font-semibold mb-4">Photo type to upload</h2>
           <div className="flex gap-4">
-            <button
+            <motion.button
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
               onClick={() => handleModeChange('solo')}
               className={`flex items-center gap-2 px-2 py-2 rounded-xl flex-1 border transition-all ${
                 uploadMode === 'solo'
@@ -86,8 +101,11 @@ const UploadSection = () => {
               <span className={`font-bold text-sm ${
                 uploadMode === 'solo' ? 'text-white' : 'text-gray-900'
               }`}>2 Solo Photos</span>
-            </button>
-            <button
+            </motion.button>
+
+            <motion.button
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
               onClick={() => handleModeChange('couple')}
               className={`flex items-center gap-2 px-2 py-2 rounded-xl flex-1 border transition-all ${
                 uploadMode === 'couple'
@@ -99,161 +117,283 @@ const UploadSection = () => {
               <span className={`font-bold text-sm ${
                 uploadMode === 'couple' ? 'text-white' : 'text-gray-900'
               }`}>1 Couple Photo</span>
-            </button>
+            </motion.button>
           </div>
-        </div>
+        </motion.div>
 
-        {/* Upload Area */}
-        <div className="mb-8">
-          <h2 className="text-xl font-semibold mb-4">Upload Photos</h2>
-          
-          {uploadMode === 'solo' ? (
-            // Solo Photos Upload
-            <div className="grid grid-cols-2 gap-4">
-              {/* First Solo Photo */}
-              <div className="relative">
-                <div className="absolute -inset-[1px] rounded-2xl bg-gradient-to-r opacity-80" />
-                <label
-                  htmlFor="solo-photo-1"
-                  className="relative block bg-white rounded-2xl border-2 border-dashed border-gray-200 cursor-pointer overflow-hidden"
+        <AnimatePresence mode="wait">
+          <motion.div
+            key={uploadMode}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -20 }}
+            transition={{ duration: 0.3 }}
+            className="mb-8"
+          >
+            <h2 className="text-xl font-semibold mb-4">Upload Photos</h2>
+            
+            {uploadMode === 'solo' ? (
+              <div className="grid grid-cols-2 gap-4">
+                {/* First Solo Photo */}
+                <motion.div 
+                  className="relative"
+                  whileHover={{ scale: 1.02 }}
                 >
-                  <input
-                    type="file"
-                    id="solo-photo-1"
-                    className="hidden"
-                    accept="image/*"
-                    onChange={(e) => handleFileUpload(e, 'solo1')}
-                  />
-                  {soloPhoto1 ? (
-                    <div className="relative">
-                      <img 
-                        src={soloPhoto1} 
-                        alt="First person" 
-                        className="w-full h-[200px] object-cover"
-                      />
-                      <button
-                        onClick={(e) => {
-                          e.preventDefault();
-                          clearPhoto('solo1');
-                        }}
-                        className="absolute top-2 right-2 p-1 bg-white rounded-full shadow-lg"
-                      >
-                        <X className="w-4 h-4 text-gray-500" />
-                      </button>
-                    </div>
-                  ) : (
-                    <div className="flex flex-col items-center justify-center p-8 min-h-[200px]">
-                      <Upload className="w-8 h-8 text-gray-400 mb-2" />
-                      <p className="text-gray-500 text-center text-sm">
-                        Upload first photo
-                      </p>
-                    </div>
-                  )}
-                </label>
-              </div>
-
-              {/* Second Solo Photo */}
-              <div className="relative">
-                <div className="absolute -inset-[1px] rounded-2xl  opacity-80" />
-                <label
-                  htmlFor="solo-photo-2"
-                  className="relative block bg-white rounded-2xl border-2 border-dashed border-gray-200 cursor-pointer overflow-hidden"
-                >
-                  <input
-                    type="file"
-                    id="solo-photo-2"
-                    className="hidden"
-                    accept="image/*"
-                    onChange={(e) => handleFileUpload(e, 'solo2')}
-                  />
-                  {soloPhoto2 ? (
-                    <div className="relative">
-                      <img 
-                        src={soloPhoto2} 
-                        alt="Second person" 
-                        className="w-full h-[200px] object-cover"
-                      />
-                      <button
-                        onClick={(e) => {
-                          e.preventDefault();
-                          clearPhoto('solo2');
-                        }}
-                        className="absolute top-2 right-2 p-1 bg-white rounded-full shadow-lg"
-                      >
-                        <X className="w-4 h-4 text-gray-500" />
-                      </button>
-                    </div>
-                  ) : (
-                    <div className="flex flex-col items-center justify-center p-8 min-h-[200px]">
-                      <Upload className="w-8 h-8 text-gray-400 mb-2" />
-                      <p className="text-gray-500 text-center text-sm">
-                        Upload second photo
-                      </p>
-                    </div>
-                  )}
-                </label>
-              </div>
-            </div>
-          ) : (
-            // Couple Photo Upload
-            <div className="relative">
-              <div className="absolute -inset-[1px] rounded-2xl  opacity-80" />
-              <label
-                htmlFor="couple-photo"
-                className="relative block bg-white rounded-2xl border-2 border-dashed border-gray-200 cursor-pointer overflow-hidden"
-              >
-                <input
-                  type="file"
-                  id="couple-photo"
-                  className="hidden"
-                  accept="image/*"
-                  onChange={(e) => handleFileUpload(e, 'couple')}
-                />
-                {couplePhoto ? (
-                  <div className="relative">
-                    <img 
-                      src={couplePhoto} 
-                      alt="Couple" 
-                      className="w-full h-[200px] object-cover"
+                  <div className="absolute -inset-[1px] rounded-2xl bg-gradient-to-r opacity-80" />
+                  <label
+                    htmlFor="solo-photo-1"
+                    className="relative block bg-white rounded-2xl border-2 border-dashed border-gray-200 cursor-pointer overflow-hidden"
+                  >
+                    <input
+                      type="file"
+                      id="solo-photo-1"
+                      className="hidden"
+                      accept="image/*"
+                      onChange={(e) => handleFileUpload(e, 'solo1')}
                     />
-                    <button
-                      onClick={(e) => {
-                        e.preventDefault();
-                        clearPhoto('couple');
-                      }}
-                      className="absolute top-2 right-2 p-1 bg-white rounded-full shadow-lg"
-                    >
-                      <X className="w-4 h-4 text-gray-500" />
-                    </button>
-                  </div>
-                ) : (
-                  <div className="flex flex-col items-center justify-center p-8 min-h-[200px]">
-                    <Upload className="w-8 h-8 text-gray-400 mb-2" />
-                    <p className="text-gray-500 text-center text-sm">
-                      Upload couple photo
-                    </p>
-                  </div>
-                )}
-              </label>
-            </div>
-          )}
-        </div>
+                    <AnimatePresence mode="wait">
+                      {soloPhoto1 ? (
+                        <motion.div 
+                          initial={{ opacity: 0 }}
+                          animate={{ opacity: 1 }}
+                          exit={{ opacity: 0 }}
+                          className="relative"
+                        >
+                          <img 
+                            src={soloPhoto1} 
+                            alt="First person" 
+                            className="w-full h-[200px] object-cover"
+                          />
+                          <motion.button
+                            whileHover={{ scale: 1.1 }}
+                            whileTap={{ scale: 0.9 }}
+                            onClick={(e) => {
+                              e.preventDefault();
+                              clearPhoto('solo1');
+                            }}
+                            className="absolute top-2 right-2 p-1 bg-white rounded-full shadow-lg"
+                          >
+                            <X className="w-4 h-4 text-gray-500" />
+                          </motion.button>
+                        </motion.div>
+                      ) : (
+                        <motion.div 
+                          initial={{ opacity: 0 }}
+                          animate={{ opacity: 1 }}
+                          exit={{ opacity: 0 }}
+                          className="flex flex-col items-center justify-center p-8 min-h-[200px]"
+                        >
+                          <Upload className="w-8 h-8 text-gray-400 mb-2" />
+                          <p className="text-gray-500 text-center text-sm">
+                            Upload first photo
+                          </p>
+                        </motion.div>
+                      )}
+                    </AnimatePresence>
+                  </label>
+                </motion.div>
+
+                {/* Second Solo Photo */}
+                <motion.div 
+                  className="relative"
+                  whileHover={{ scale: 1.02 }}
+                >
+                  <div className="absolute -inset-[1px] rounded-2xl opacity-80" />
+                  <label
+                    htmlFor="solo-photo-2"
+                    className="relative block bg-white rounded-2xl border-2 border-dashed border-gray-200 cursor-pointer overflow-hidden"
+                  >
+                    <input
+                      type="file"
+                      id="solo-photo-2"
+                      className="hidden"
+                      accept="image/*"
+                      onChange={(e) => handleFileUpload(e, 'solo2')}
+                    />
+                    <AnimatePresence mode="wait">
+                      {soloPhoto2 ? (
+                        <motion.div 
+                          initial={{ opacity: 0 }}
+                          animate={{ opacity: 1 }}
+                          exit={{ opacity: 0 }}
+                          className="relative"
+                        >
+                          <img 
+                            src={soloPhoto2} 
+                            alt="Second person" 
+                            className="w-full h-[200px] object-cover"
+                          />
+                          <motion.button
+                            whileHover={{ scale: 1.1 }}
+                            whileTap={{ scale: 0.9 }}
+                            onClick={(e) => {
+                              e.preventDefault();
+                              clearPhoto('solo2');
+
+
+                              }}
+                            className="absolute top-2 right-2 p-1 bg-white rounded-full shadow-lg"
+                          >
+                            <X className="w-4 h-4 text-gray-500" />
+                          </motion.button>
+                        </motion.div>
+                      ) : (
+                        <motion.div 
+                          initial={{ opacity: 0 }}
+                          animate={{ opacity: 1 }}
+                          exit={{ opacity: 0 }}
+                          className="flex flex-col items-center justify-center p-8 min-h-[200px]"
+                        >
+                          <Upload className="w-8 h-8 text-gray-400 mb-2" />
+                          <p className="text-gray-500 text-center text-sm">
+                            Upload second photo
+                          </p>
+                        </motion.div>
+                      )}
+                    </AnimatePresence>
+                  </label>
+                </motion.div>
+              </div>
+            ) : (
+              // Couple Photo Upload
+              <motion.div 
+                className="relative"
+                whileHover={{ scale: 1.02 }}
+              >
+                <div className="absolute -inset-[1px] rounded-2xl opacity-80" />
+                <label
+                  htmlFor="couple-photo"
+                  className="relative block bg-white rounded-2xl border-2 border-dashed border-gray-200 cursor-pointer overflow-hidden"
+                >
+                  <input
+                    type="file"
+                    id="couple-photo"
+                    className="hidden"
+                    accept="image/*"
+                    onChange={(e) => handleFileUpload(e, 'couple')}
+                  />
+                  <AnimatePresence mode="wait">
+                    {couplePhoto ? (
+                      <motion.div 
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
+                        className="relative"
+                      >
+                        <img 
+                          src={couplePhoto} 
+                          alt="Couple" 
+                          className="w-full h-[200px] object-cover"
+                        />
+                        <motion.button
+                          whileHover={{ scale: 1.1 }}
+                          whileTap={{ scale: 0.9 }}
+                          onClick={(e) => {
+                            e.preventDefault();
+                            clearPhoto('couple');
+                          }}
+                          className="absolute top-2 right-2 p-1 bg-white rounded-full shadow-lg"
+                        >
+                          <X className="w-4 h-4 text-gray-500" />
+                        </motion.button>
+                      </motion.div>
+                    ) : (
+                      <motion.div 
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
+                        className="flex flex-col items-center justify-center p-8 min-h-[200px]"
+                      >
+                        <Upload className="w-8 h-8 text-gray-400 mb-2" />
+                        <p className="text-gray-500 text-center text-sm">
+                          Upload couple photo
+                        </p>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                </label>
+              </motion.div>
+            )}
+          </motion.div>
+        </AnimatePresence>
 
         {/* Generate Button */}
-        <button
-          onClick={handleGenerate}
-          disabled={!isGenerateEnabled || loading}
-          className={`w-full py-3 rounded-xl font-bold text-white transition-all ${
-            isGenerateEnabled
-              ? 'bg-gradient-to-r from-purple-500 via-pink-500 to-orange-500 hover:opacity-90'
-              : 'bg-gray-300 cursor-not-allowed'
-          }`}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.3 }}
+          viewport={{ once: true }}
         >
-          {loading ? 'Generating...' : 'Generate Video'}
-        </button>
+          <motion.button
+            onClick={handleGenerate}
+            disabled={!isGenerateEnabled || loading}
+            whileHover={{ scale: isGenerateEnabled ? 1.02 : 1 }}
+            whileTap={{ scale: isGenerateEnabled ? 0.98 : 1 }}
+            className={`w-full py-3 rounded-xl font-bold text-white transition-all ${
+              isGenerateEnabled
+                ? 'bg-gradient-to-r from-purple-500 via-pink-500 to-orange-500 hover:opacity-90'
+                : 'bg-gray-300 cursor-not-allowed'
+            }`}
+          >
+            <AnimatePresence mode="wait">
+              {loading ? (
+                <motion.div
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  className="flex items-center justify-center"
+                >
+                  <svg 
+                    className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" 
+                    xmlns="http://www.w3.org/2000/svg" 
+                    fill="none" 
+                    viewBox="0 0 24 24"
+                  >
+                    <circle 
+                      className="opacity-25" 
+                      cx="12" 
+                      cy="12" 
+                      r="10" 
+                      stroke="currentColor" 
+                      strokeWidth="4"
+                    />
+                    <path 
+                      className="opacity-75" 
+                      fill="currentColor" 
+                      d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"
+                    />
+                  </svg>
+                  Generating...
+                </motion.div>
+              ) : (
+                <motion.span
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                >
+                  Generate Video
+                </motion.span>
+              )}
+            </AnimatePresence>
+          </motion.button>
+        </motion.div>
+
+        {/* Success Message */}
+        <AnimatePresence>
+          {!loading && isGenerateEnabled && (
+            <motion.p
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -10 }}
+              className="text-sm text-green-500 text-center mt-4"
+            >
+              All set! Click generate to create your video
+            </motion.p>
+          )}
+        </AnimatePresence>
       </div>
-    </section>
-  )
-}
+    </motion.section>
+  );
+};
 
 export default UploadSection;
