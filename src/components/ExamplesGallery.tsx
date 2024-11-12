@@ -56,7 +56,7 @@ const ExamplesGallery: React.FC = () => {
   return (
     <section className="bg-white py-8">
       <div className="max-w-6xl mx-auto">
-        <h2 className="text-xl font-bold px-6 mb-4">
+        <h2 className="text-xl font-bold px-4 mb-4">
           Watch the Magic
         </h2>
 

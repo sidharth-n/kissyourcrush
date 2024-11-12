@@ -2,7 +2,7 @@ import React from "react";
 
 const Hero = () => {
   return (
-    <section className="p-4 ">
+    <section className="p-3 ">
       <div className="w-full max-w-3xl mx-auto overflow-hidden  rounded-[40px]">
         <div 
           className="relative min-h-[450px] p-8 flex flex-col items-center justify-center overflow-hidden"

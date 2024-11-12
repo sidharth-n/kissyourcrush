@@ -1,78 +1,135 @@
 import React from 'react';
-import { Shield, Lock, Trash2, Star } from 'lucide-react';
+import { Star } from 'lucide-react';
 
 const TrustSection = () => {
   return (
-    <section className="bg-white py-16 px-4">
-      <div className="max-w-4xl mx-auto">
-        <div className="grid md:grid-cols-2 gap-8">
-          <div className="bg-light-purple bg-opacity-30 p-8 rounded-2xl">
-            <h3 className="font-playfair text-2xl mb-6">Trust & Safety</h3>
-            <div className="space-y-6">
-              <div className="flex items-start">
-                <Shield className="w-6 h-6 text-deep-pink mr-4 flex-shrink-0" />
-                <div>
-                  <h4 className="font-montserrat font-semibold mb-1">
-                    100% Private Processing
-                  </h4>
-                  <p className="text-sm text-gray-600">
-                    Your photos are processed securely and never stored
-                  </p>
-                </div>
-              </div>
-              <div className="flex items-start">
-                <Lock className="w-6 h-6 text-deep-pink mr-4 flex-shrink-0" />
-                <div>
-                  <h4 className="font-montserrat font-semibold mb-1">
-                    Bank-Level Security
-                  </h4>
-                  <p className="text-sm text-gray-600">
-                    Enterprise-grade encryption for all uploads
-                  </p>
-                </div>
-              </div>
-              <div className="flex items-start">
-                <Trash2 className="w-6 h-6 text-deep-pink mr-4 flex-shrink-0" />
-                <div>
-                  <h4 className="font-montserrat font-semibold mb-1">
-                    Instant Photo Deletion
-                  </h4>
-                  <p className="text-sm text-gray-600">
-                    All photos are permanently deleted after processing
-                  </p>
-                </div>
-              </div>
+    <section className="bg-white py-12 px-4">
+      <div className="max-w-6xl mx-auto">
+        {/* Stats Grid */}
+        <div className="grid grid-cols-2 gap-4 mb-12">
+          {/* AI Accuracy */}
+          <div className="bg-gray-50 rounded-3xl p-8 flex flex-col items-center justify-center">
+            <span className="text-2xl font-bold bg-gradient-to-r from-pink-500 to-orange-500 bg-clip-text text-transparent mb-2">
+              95%
+            </span>
+            <span className="text-gray-900 text-sm">Ai Accuracy</span>
+          </div>
+
+          {/* Generation Speed */}
+          <div className="bg-gray-50 rounded-3xl p-8 flex flex-col items-center justify-center">
+            <span className="text-2xl font-bold bg-gradient-to-r from-pink-500 to-orange-500 bg-clip-text text-transparent mb-2">
+              &lt;500s
+            </span>
+            <span className="text-gray-900 text-sm text-center">Generation Speed</span>
+          </div>
+
+          {/* User Rating */}
+          <div className="bg-gray-50 rounded-3xl p-8 flex flex-col items-center justify-center">
+            <div className="flex items-center mb-2">
+              <span className="text-2xl font-bold bg-gradient-to-r from-pink-500 to-orange-500 bg-clip-text text-transparent">
+                4.2
+              </span>
+              <Star className="w-5 h-5 ml-1 text-orange-500" />
+            </div>
+            <span className="text-gray-900 text-sm">User Rating</span>
+          </div>
+
+          {/* Daily Users */}
+          <div className="bg-gray-50 rounded-3xl p-8 flex flex-col items-center justify-center">
+            <span className="text-2xl font-bold bg-gradient-to-r from-pink-500 to-orange-500 bg-clip-text text-transparent mb-2">
+              1K+
+            </span>
+            <span className="text-gray-900 text-sm">Daily Users</span>
+          </div>
+        </div>
+
+        {/* Security Features */}
+        <div className="space-y-12 bg-gray-50 rounded-xl px-6 py-12">
+          {/* Private Processing */}
+          <div className="flex items-start gap-4">
+            <div className="flex-shrink-0">
+              <img 
+                src="/shield-tick.svg" 
+                alt="" 
+                className="w-8 h-8"
+                style={{
+                  filter: 'url(#pink-gradient)'
+                }}
+              />
+            </div>
+            <div>
+              <h3 className="text-base font-bold text-gray-900 mb-2">
+                100% Private Processing
+              </h3>
+              <p className="text-gray-500 text-sm opacity-70">
+                Your photos are processed securely and never stored
+              </p>
             </div>
           </div>
 
-          <div className="bg-light-purple bg-opacity-30 p-8 rounded-2xl">
-            <h3 className="font-playfair text-2xl mb-6">Quality Markers</h3>
-            <div className="grid grid-cols-2 gap-6">
-              <div className="text-center">
-                <div className="text-3xl font-bold text-deep-pink mb-1">95%</div>
-                <div className="text-sm text-gray-600">AI Accuracy</div>
-              </div>
-              <div className="text-center">
-                <div className="text-3xl font-bold text-deep-pink mb-1">&lt;30s</div>
-                <div className="text-sm text-gray-600">Generation Speed</div>
-              </div>
-              <div className="text-center">
-                <div className="flex items-center justify-center text-3xl font-bold text-deep-pink mb-1">
-                  4.9
-                  <Star className="w-5 h-5 ml-1" />
-                </div>
-                <div className="text-sm text-gray-600">User Rating</div>
-              </div>
-              <div className="text-center">
-                <div className="text-3xl font-bold text-deep-pink mb-1">10K+</div>
-                <div className="text-sm text-gray-600">Daily Users</div>
-              </div>
+          {/* Bank Level Security */}
+          <div className="flex items-start gap-4">
+            <div className="flex-shrink-0">
+              <img 
+                src="/lock.svg" 
+                alt="" 
+              className="w-8 h-8"
+                style={{
+                  filter: 'url(#pink-gradient)'
+                }}
+              />
+            </div>
+            <div>
+              <h3 className="text-base font-bold text-gray-900 mb-2">
+                Bank Level Security
+              </h3>
+              <p className="text-gray-500 text-sm opacity-70">
+                 Enterprise-grade encryption for all uploads
+              </p>
+           
+            </div>
+          </div>
+
+          {/* Instant Photo Deletion */}
+          <div className="flex items-start gap-4">
+            <div className="flex-shrink-0">
+              <img 
+                src="/trash.svg" 
+                alt="" 
+              className="w-8 h-8"
+                style={{
+                  filter: 'url(#pink-gradient)'
+                }}
+              />
+            </div>
+            <div>
+              <h3 className="text-base font-bold text-gray-900 mb-2">
+                Instant Photo Deletion
+              </h3>
+              <p className="text-gray-500 text-sm opacity-70">
+                All photos are permanently deleted after processing
+              </p>
             </div>
           </div>
         </div>
       </div>
+
+      {/* SVG Filters for Icon Gradients */}
+      <svg width="0" height="0" className="hidden">
+        <defs>
+          <linearGradient id="pink-gradient" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" stopColor="#EC4899" />
+            <stop offset="100%" stopColor="#F97316" />
+          </linearGradient>
+        </defs>
+        <filter id="pink-gradient-filter">
+          <feFlood floodColor="url(#pink-gradient)" result="flood" />
+          <feComposite operator="in" in="flood" in2="SourceGraphic" />
+          <feBlend mode="normal" in2="SourceGraphic" />
+        </filter>
+      </svg>
     </section>
   );
-}
+};
 
 export default TrustSection;
