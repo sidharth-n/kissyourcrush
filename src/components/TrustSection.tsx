@@ -81,7 +81,7 @@ const TrustSection = () => {
       whileInView={{ opacity: 1 }}
       transition={{ duration: 1.5 }}
       viewport={{ once: true, margin: "-20%" }}
-      className="bg-white py-12 px-4"
+      className="bg-white py-8 px-4"
     >
       <div className="max-w-6xl mx-auto">
         {/* Stats Grid */}

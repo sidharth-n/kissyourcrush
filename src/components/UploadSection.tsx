@@ -75,7 +75,7 @@ const UploadSection = () => {
       whileInView={{ opacity: 1, y: 0 }}
       transition={{ duration: 2 }}
       viewport={{ once: true }}
-      className="bg-gray-100 py-8 px-4"
+      className="bg-gray-50 pt-16 pb-8 px-6 rounded-3xl"
     >
       <div className="max-w-xl mx-auto">
         <motion.div 
@@ -83,40 +83,36 @@ const UploadSection = () => {
           whileInView={{ opacity: 1, x: 0 }}
           transition={{ delay: 0.2, duration:1 }}
           viewport={{ once: true }}
-          className="mb-4"
+          className="mb-6"
         >
-          <h2 className="text-xl font-semibold mb-4 mt-4">Photo type to upload</h2>
+          <h2 className="text-xl font-semibold mb-6">Photo type to upload</h2>
           <div className="flex gap-4">
             <motion.button
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
               onClick={() => handleModeChange('solo')}
-              className={`flex items-center gap-2 px-2 py-2 rounded-xl flex-1 border transition-all ${
+              className={`relative flex items-center gap-2 px-2 py-3 rounded-xl flex-1 ${
                 uploadMode === 'solo'
-                  ? 'bg-white shadow-lg bg-gradient-to-r from-pink-500 to-orange-500'
-                  : 'bg-white border-gray-200'
+                  ? 'gradient-border-active'
+                  : 'bg-gray-100 border border-gray-200'
               }`}
             >
               <img src="/soloicon.svg" alt="" className="w-6 h-6" />
-              <span className={`font-bold text-sm ${
-                uploadMode === 'solo' ? 'text-white' : 'text-gray-900'
-              }`}>2 Solo Photos</span>
+              <span className="font-semibold text-sm">2 Solo Photos</span>
             </motion.button>
 
             <motion.button
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
               onClick={() => handleModeChange('couple')}
-              className={`flex items-center gap-2 px-2 py-2 rounded-xl flex-1 border transition-all ${
+              className={`relative flex items-center gap-2 px-2 py-2 rounded-xl  flex-1 ${
                 uploadMode === 'couple'
-                  ? 'bg-white shadow-lg bg-gradient-to-r from-pink-500 to-orange-500'
-                  : 'bg-white border-gray-200'
+                  ? 'gradient-border-active'
+                  : 'bg-gray-100 border border-gray-200'
               }`}
             >
               <img src="/coupleicon.svg" alt="" className="w-6 h-6" />
-              <span className={`font-bold text-sm ${
-                uploadMode === 'couple' ? 'text-white' : 'text-gray-900'
-              }`}>1 Couple Photo</span>
+              <span className="font-semibold text-sm">1 Couple Photo</span>
             </motion.button>
           </div>
         </motion.div>
@@ -124,15 +120,15 @@ const UploadSection = () => {
         <AnimatePresence mode="wait">
           <motion.div
             key={uploadMode}
-            initial={{ opacity: 0, }}
-          whileInView={{ opacity: 1,  }}
-          transition={{ delay: 0.2, duration:1 }}
+            initial={{ opacity: 0 }}
+            whileInView={{ opacity: 1 }}
+            transition={{ delay: 0.2, duration:1 }}
             className="mb-8"
           >
-            <h2 className="text-xl font-semibold mb-4">Upload Photos</h2>
+            <h2 className="text-xl font-semibold mb-6">Upload Photos</h2>
             
             {uploadMode === 'solo' ? (
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-2 gap-6">
                 {/* First Solo Photo */}
                 <motion.div 
                   className="relative"
@@ -228,9 +224,7 @@ const UploadSection = () => {
                             onClick={(e) => {
                               e.preventDefault();
                               clearPhoto('solo2');
-
-
-                              }}
+                            }}
                             className="absolute top-2 right-2 p-1 bg-white rounded-full shadow-lg"
                           >
                             <X className="w-4 h-4 text-gray-500" />
@@ -322,13 +316,14 @@ const UploadSection = () => {
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.3 }}
           viewport={{ once: true }}
+          className="mb-6"
         >
           <motion.button
             onClick={handleGenerate}
             disabled={!isGenerateEnabled || loading}
             whileHover={{ scale: isGenerateEnabled ? 1.02 : 1 }}
             whileTap={{ scale: isGenerateEnabled ? 0.98 : 1 }}
-            className={`w-full py-3 rounded-xl font-bold text-white transition-all ${
+            className={`w-full py-4 rounded-full font-bold text-white transition-all ${
               isGenerateEnabled
                 ? 'bg-gradient-to-r from-purple-500 via-pink-500 to-orange-500 hover:opacity-90'
                 : 'bg-gray-300 cursor-not-allowed'
@@ -391,6 +386,33 @@ const UploadSection = () => {
           )}
         </AnimatePresence>
       </div>
+
+      {/* Add gradient border styles */}
+   <style jsx>{`
+        .gradient-border-active {
+          background: white;
+          position: relative;
+          z-index: 0;
+        }
+        
+        .gradient-border-active::before {
+          content: '';
+          position: absolute;
+          z-index: -1;
+          inset: -2.5px;
+          background: linear-gradient(90deg, #EC4899, #F97316);
+          border-radius: 20px;
+        }
+        
+        .gradient-border-active::after {
+          content: '';
+          position: absolute;
+          z-index: -1;
+          inset: 0;
+          background: white;
+          border-radius: 20px;
+        }
+      `}</style>
     </motion.section>
   );
 };
