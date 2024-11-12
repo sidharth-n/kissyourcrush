@@ -4,26 +4,48 @@ import { Star } from 'lucide-react';
 import { motion } from 'framer-motion';
 
 const TrustSection = () => {
-  // Animation variants for staggered children
+  // Smoother animation variants
   const containerVariants = {
     hidden: { opacity: 0 },
     visible: {
       opacity: 1,
       transition: {
-        staggerChildren: 0.15,
-        delayChildren: 0.2,
+        staggerChildren: 0.3,
+        delayChildren: 0.1,
+        duration: 1,
+        ease: "easeOut"
       }
     }
   };
 
   const itemVariants = {
-    hidden: { opacity: 0, y: 20 },
+    hidden: { 
+      opacity: 0, 
+      y: 15,
+      scale: 0.95
+    },
+    visible: {
+      opacity: 1,
+      y: 0,
+      scale: 1,
+      transition: {
+        duration: 1.2,
+        ease: [0.25, 0.1, 0.25, 1], // Custom easing for smoother motion
+      }
+    }
+  };
+
+  const textVariants = {
+    hidden: { 
+      opacity: 0, 
+      y: 10 
+    },
     visible: {
       opacity: 1,
       y: 0,
       transition: {
         duration: 0.8,
-        ease: [0.04, 0.62, 0.23, 0.98] // Custom easing for smoother animation
+        ease: "easeOut"
       }
     }
   };
@@ -57,8 +79,8 @@ const TrustSection = () => {
     <motion.section 
       initial={{ opacity: 0 }}
       whileInView={{ opacity: 1 }}
-      transition={{ duration: 1 }}
-      viewport={{ once: true, margin: "-100px" }}
+      transition={{ duration: 1.5 }}
+      viewport={{ once: true, margin: "-20%" }}
       className="bg-white py-12 px-4"
     >
       <div className="max-w-6xl mx-auto">
@@ -67,24 +89,42 @@ const TrustSection = () => {
           variants={containerVariants}
           initial="hidden"
           whileInView="visible"
-          viewport={{ once: true, margin: "-100px" }}
+          viewport={{ once: true, margin: "-20%" }}
           className="grid grid-cols-2 gap-4 mb-12"
         >
           {statsData.map((stat, index) => (
             <motion.div
               key={stat.label}
               variants={itemVariants}
-              whileHover={{ scale: 1.02 }}
-              transition={{ duration: 0.2 }}
-              className="bg-gray-50 rounded-3xl p-8 flex flex-col items-center justify-center"
+              whileHover={{ 
+                scale: 1.02,
+                transition: { duration: 0.3 }
+              }}
+              className="bg-gray-50 rounded-3xl p-8 flex flex-col items-center justify-center transform-gpu"
             >
-              <div className="flex items-center">
+              <motion.div 
+                className="flex items-center"
+                variants={textVariants}
+              >
                 <span className="text-2xl font-bold bg-gradient-to-r from-pink-500 to-orange-500 bg-clip-text text-transparent">
                   {stat.value}
                 </span>
-                {stat.showStar && <Star className="w-5 h-5 ml-1 text-orange-500" />}
-              </div>
-              <span className="text-gray-900 text-sm text-center mt-2">{stat.label}</span>
+                {stat.showStar && (
+                  <motion.div
+                    initial={{ rotate: -30, opacity: 0 }}
+                    animate={{ rotate: 0, opacity: 1 }}
+                    transition={{ duration: 0.5, delay: 0.1 }}
+                  >
+                    <Star className="w-5 h-5 ml-1 text-orange-500" />
+                  </motion.div>
+                )}
+              </motion.div>
+              <motion.span 
+                variants={textVariants}
+                className="text-gray-900 text-sm text-center mt-2"
+              >
+                {stat.label}
+              </motion.span>
             </motion.div>
           ))}
         </motion.div>
@@ -94,37 +134,47 @@ const TrustSection = () => {
           variants={containerVariants}
           initial="hidden"
           whileInView="visible"
-          viewport={{ once: true, margin: "-100px" }}
+          viewport={{ once: true, margin: "-20%" }}
           className="space-y-12 bg-gray-50 rounded-xl px-6 py-12"
         >
           {securityFeatures.map((feature, index) => (
             <motion.div
               key={feature.title}
               variants={itemVariants}
-              whileHover={{ x: 5 }}
-              transition={{ duration: 0.2 }}
-              className="flex items-start gap-4"
+              whileHover={{ 
+                x: 5,
+                transition: { duration: 0.3 }
+              }}
+              className="flex items-start gap-4 transform-gpu"
             >
               <motion.div 
                 className="flex-shrink-0"
-                whileHover={{ rotate: 5 }}
+                whileHover={{ 
+                  rotate: 5,
+                  transition: { duration: 0.3 }
+                }}
               >
-                <img 
+                <motion.img 
                   src={`/${feature.icon}`} 
                   alt="" 
                   className="w-8 h-8"
                   style={{
                     filter: 'url(#pink-gradient)'
                   }}
+                  initial={{ scale: 0.8, opacity: 0 }}
+                  animate={{ scale: 1, opacity: 1 }}
+                  transition={{ duration: 0.5, delay: index * 0.1 }}
                 />
               </motion.div>
               <div>
                 <motion.h3 
+                  variants={textVariants}
                   className="text-base font-bold text-gray-900 mb-2"
                 >
                   {feature.title}
                 </motion.h3>
                 <motion.p 
+                  variants={textVariants}
                   className="text-gray-500 text-sm opacity-70"
                 >
                   {feature.description}
