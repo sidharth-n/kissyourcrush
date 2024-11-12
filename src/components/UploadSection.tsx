@@ -91,9 +91,9 @@ const UploadSection = () => {
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
               onClick={() => handleModeChange('solo')}
-              className={`flex items-center gap-2 px-2 py-2 rounded-3xl flex-1 border transition-all ${
+              className={`flex items-center gap-2 px-2 py-2 rounded-xl flex-1 border transition-all ${
                 uploadMode === 'solo'
-                  ? 'bg-white shadow-lg bg-gradient-to-r from-purple-500 via-pink-500 to-orange-500'
+                  ? 'bg-white shadow-lg bg-gradient-to-r from-pink-500 to-orange-500'
                   : 'bg-white border-gray-200'
               }`}
             >
@@ -107,9 +107,9 @@ const UploadSection = () => {
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
               onClick={() => handleModeChange('couple')}
-              className={`flex items-center gap-2 px-2 py-2 rounded-3xl flex-1 border transition-all ${
+              className={`flex items-center gap-2 px-2 py-2 rounded-xl flex-1 border transition-all ${
                 uploadMode === 'couple'
-                  ? 'bg-white shadow-lg bg-gradient-to-r from-purple-500 via-pink-500 to-orange-500'
+                  ? 'bg-white shadow-lg bg-gradient-to-r from-pink-500 to-orange-500'
                   : 'bg-white border-gray-200'
               }`}
             >
