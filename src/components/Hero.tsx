@@ -41,7 +41,7 @@ const Hero: React.FC<HeroProps> = ({ onTryClick }) => {
               className="flex items-center gap-3 mb-16"
             >
               <img 
-                src="/Kyclogo.png" 
+                src="/Kyclogo.svg" 
                 alt="KissYourCrush Logo" 
                 className="h-12 object-contain"
               />
