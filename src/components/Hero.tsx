@@ -14,10 +14,10 @@ const Hero: React.FC<HeroProps> = ({ onTryClick }) => {
       transition={{ duration: 1 }}
       className="p-3"
     >
-      <div className="w-full max-w-3xl mx-auto overflow-hidden rounded-[40px]">
+      <div className="w-full max-w-3xl mx-auto overflow-hidden rounded-3xl ">
         <div 
           className="relative min-h-[450px] p-8 flex flex-col items-center justify-center overflow-hidden"
-          style={{ borderRadius: '40px' }}
+         
         >
           {/* Background Video */}
           <video 
@@ -26,7 +26,7 @@ const Hero: React.FC<HeroProps> = ({ onTryClick }) => {
             muted 
             playsInline
             className="absolute inset-0 w-full h-full object-cover z-0"
-            style={{ borderRadius: '40px' }}
+         
           >
             <source src="/bg.mp4" type="video/mp4" />
           </video>
@@ -72,8 +72,8 @@ const Hero: React.FC<HeroProps> = ({ onTryClick }) => {
                 onClick={onTryClick}
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
-                className="w-full bg-white text-black text-lg font-bold py-4 px-8 shadow-xl transition-all duration-300 hover:opacity-90"
-                style={{ borderRadius: '24px' }}
+                className="w-full bg-white text-black text-lg font-bold py-4 px-8 shadow-xl transition-all duration-300 hover:opacity-90 rounded-2xl"
+                
               >
                 Try It Free
               </motion.button>

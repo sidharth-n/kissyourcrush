@@ -90,7 +90,7 @@ const TrustSection = () => {
           initial="hidden"
           whileInView="visible"
           viewport={{ once: true, margin: "-20%" }}
-          className="grid grid-cols-2 gap-4 mb-12"
+          className="grid grid-cols-2 gap-4 mb-8"
         >
           {statsData.map((stat, index) => (
             <motion.div
@@ -135,7 +135,7 @@ const TrustSection = () => {
           initial="hidden"
           whileInView="visible"
           viewport={{ once: true, margin: "-20%" }}
-          className="space-y-12 bg-gray-50 rounded-xl px-6 py-12"
+          className="space-y-12 bg-gray-50 rounded-3xl px-6 py-12"
         >
           {securityFeatures.map((feature, index) => (
             <motion.div

@@ -83,17 +83,17 @@ const UploadSection = () => {
           whileInView={{ opacity: 1, x: 0 }}
           transition={{ delay: 0.2, duration:1 }}
           viewport={{ once: true }}
-          className="mb-8"
+          className="mb-4"
         >
-          <h2 className="text-xl font-semibold mb-4">Photo type to upload</h2>
+          <h2 className="text-xl font-semibold mb-4 mt-4">Photo type to upload</h2>
           <div className="flex gap-4">
             <motion.button
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
               onClick={() => handleModeChange('solo')}
-              className={`flex items-center gap-2 px-2 py-2 rounded-xl flex-1 border transition-all ${
+              className={`flex items-center gap-2 px-2 py-2 rounded-3xl flex-1 border transition-all ${
                 uploadMode === 'solo'
-                  ? 'bg-white shadow-lg border-transparent bg-gradient-to-r from-purple-500 via-pink-500 to-orange-500'
+                  ? 'bg-white shadow-lg bg-gradient-to-r from-purple-500 via-pink-500 to-orange-500'
                   : 'bg-white border-gray-200'
               }`}
             >
@@ -107,9 +107,9 @@ const UploadSection = () => {
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
               onClick={() => handleModeChange('couple')}
-              className={`flex items-center gap-2 px-2 py-2 rounded-xl flex-1 border transition-all ${
+              className={`flex items-center gap-2 px-2 py-2 rounded-3xl flex-1 border transition-all ${
                 uploadMode === 'couple'
-                  ? 'bg-white shadow-lg border-transparent bg-gradient-to-r from-purple-500 via-pink-500 to-orange-500'
+                  ? 'bg-white shadow-lg bg-gradient-to-r from-purple-500 via-pink-500 to-orange-500'
                   : 'bg-white border-gray-200'
               }`}
             >
