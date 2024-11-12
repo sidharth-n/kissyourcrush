@@ -73,15 +73,15 @@ const UploadSection = () => {
     <motion.section
       initial={{ opacity: 0, y: 20 }}
       whileInView={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.6 }}
+      transition={{ duration: 2 }}
       viewport={{ once: true }}
       className="bg-gray-100 py-8 px-4"
     >
       <div className="max-w-xl mx-auto">
         <motion.div 
-          initial={{ opacity: 0, x: -20 }}
+          initial={{ opacity: 0, y: -20 }}
           whileInView={{ opacity: 1, x: 0 }}
-          transition={{ delay: 0.2 }}
+          transition={{ delay: 0.2, duration:1 }}
           viewport={{ once: true }}
           className="mb-8"
         >
@@ -124,10 +124,9 @@ const UploadSection = () => {
         <AnimatePresence mode="wait">
           <motion.div
             key={uploadMode}
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -20 }}
-            transition={{ duration: 0.3 }}
+            initial={{ opacity: 0, }}
+          whileInView={{ opacity: 1,  }}
+          transition={{ delay: 0.2, duration:1 }}
             className="mb-8"
           >
             <h2 className="text-xl font-semibold mb-4">Upload Photos</h2>

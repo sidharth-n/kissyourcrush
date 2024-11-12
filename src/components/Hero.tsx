@@ -37,7 +37,7 @@ const Hero: React.FC<HeroProps> = ({ onTryClick }) => {
             <motion.div 
               initial={{ y: -20, opacity: 0 }}
               animate={{ y: 0, opacity: 1 }}
-              transition={{ delay: 0.3, duration: 1 }}
+              transition={{ delay: 0.3, duration: 0.5 }}
               className="flex items-center gap-3 mb-16"
             >
               <img 
@@ -51,7 +51,7 @@ const Hero: React.FC<HeroProps> = ({ onTryClick }) => {
             <motion.div 
               initial={{ scale: 0.9, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
-              transition={{ delay: 1, duration: 1 }}
+              transition={{ delay: 0.5, duration: 1 }}
               className="text-center max-w-xl mx-auto mb-6"
             >
               <h1 className="text-2xl md:text-5xl lg:text-6xl font-bold text-white mb-2 mt-44 leading-tight">
@@ -65,7 +65,7 @@ const Hero: React.FC<HeroProps> = ({ onTryClick }) => {
             <motion.div 
               initial={{ y: 20, opacity: 0 }}
               animate={{ y: 0, opacity: 1 }}
-              transition={{ delay: 2, duration: 1 }}
+              transition={{ delay: 1, duration: 1 }}
               className="w-full max-w-md"
             >
               <motion.button 

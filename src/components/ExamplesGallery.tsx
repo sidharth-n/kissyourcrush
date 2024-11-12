@@ -57,7 +57,7 @@ const ExamplesGallery: React.FC = () => {
     <motion.section 
       initial={{ opacity: 0, y: 20 }}
       whileInView={{ opacity: 1, y: 0 }}
-      transition={{ delay: 2, duration: 1 }}
+      transition={{ delay: 1, duration: 1 }}
       viewport={{ once: true }}
       className="bg-white py-8"
     >
@@ -65,7 +65,7 @@ const ExamplesGallery: React.FC = () => {
         <motion.h2 
           initial={{ opacity: 0, x: -20 }}
           whileInView={{ opacity: 1, x: 0 }}
-          transition={{ delay: 2, duration: 1 }}
+          transition={{ delay: 1, duration: 1 }}
           viewport={{ once: true }}
           className="text-xl font-bold px-4 mb-4"
         >
@@ -118,7 +118,7 @@ const ExamplesGallery: React.FC = () => {
           <motion.div 
             initial={{ opacity: 0, y: 10 }}
             whileInView={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.4 }}
+            transition={{ delay: 0 }}
             viewport={{ once: true }}
             className="flex justify-center gap-2 mt-6"
           >
