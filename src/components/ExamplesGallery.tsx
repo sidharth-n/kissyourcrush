@@ -9,9 +9,10 @@ interface ExampleItem {
 const examples: ExampleItem[] = [
   { id: 1, video: "/demo/sample_video1.mp4" },
   { id: 2, video: "/demo/sample_video2.mp4" },
-  { id: 3, video: "/demo/sample_video3.mp4" },
-  { id: 4, video: "/demo/sample_video4.mp4" },
- /*  { id: 5, video: "/demo/sample_video5.mp4" } */
+  { id: 3, video: "/demo/sample_video4.mp4" },
+  { id: 4, video: "/demo/sample_video5.mp4" },
+  { id: 5, video: "/demo/sample_video6.mp4" }, 
+  { id: 6, video: "/demo/sample_video3.mp4" }
 ];
 
 const ExamplesGallery: React.FC = () => {
