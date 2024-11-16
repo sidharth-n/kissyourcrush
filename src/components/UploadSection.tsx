@@ -8,7 +8,7 @@ fal.config({
   credentials: import.meta.env.VITE_FAL_KEY
 });
 
-console.log("env is :"+import.meta.env.VITE_FAL_KEY);
+
 
 const UploadSection = () => {
   const [uploadMode, setUploadMode] = useState<'solo' | 'couple'>('solo');
