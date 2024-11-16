@@ -1,34 +1,17 @@
-// ExamplesGallery.tsx
 import React, { useState, useRef, useEffect, RefObject } from 'react';
-import { Play } from 'lucide-react';
 import { motion } from 'framer-motion';
 
 interface ExampleItem {
   id: number;
-  image: string;
+  video: string;
 }
 
 const examples: ExampleItem[] = [
-  {
-    id: 1,
-    image: "https://images.unsplash.com/photo-1516589178581-6cd7833ae3b2?w=800",
-  },
-  {
-    id: 2,
-    image: "https://images.unsplash.com/photo-1622495966027-e0173192c728?w=800",
-  },
-  {
-    id: 3,
-    image: "https://images.unsplash.com/photo-1518991669955-9c7e78ec80ca?w=800",
-  },
-  {
-    id: 4,
-    image: "https://images.unsplash.com/photo-1516589178581-6cd7833ae3b2?w=800",
-  },
-  {
-    id: 5,
-    image: "https://images.unsplash.com/photo-1622495966027-e0173192c728?w=800",
-  }
+  { id: 1, video: "/demo/sample_video1.mp4" },
+  { id: 2, video: "/demo/sample_video2.mp4" },
+  { id: 3, video: "/demo/sample_video3.mp4" },
+  { id: 4, video: "/demo/sample_video4.mp4" },
+ /*  { id: 5, video: "/demo/sample_video5.mp4" } */
 ];
 
 const ExamplesGallery: React.FC = () => {
@@ -86,28 +69,23 @@ const ExamplesGallery: React.FC = () => {
                 key={example.id}
                 initial={{ opacity: 0, scale: 0.9 }}
                 whileInView={{ opacity: 1, scale: 1 }}
-              
                 viewport={{ once: true }}
                 className="gallery-item flex-none w-[280px] px-2 snap-center"
               >
                 <motion.div 
                   whileHover={{ scale: 1.05 }}
                   transition={{ duration: 0.2 }}
-                  className="relative rounded-2xl overflow-hidden aspect-video"
+                  className="relative rounded-2xl overflow-hidden aspect-video bg-black"
                 >
-                  <img
-                    src={example.image}
-                    alt={`Example ${index + 1}`}
+                  <video
+                    autoPlay
+                    loop
+                    muted
+                    playsInline
                     className="w-full h-full object-cover"
-                  />
-                  <div className="absolute inset-0 bg-black/30 flex items-center justify-center">
-                    <motion.div
-                      whileHover={{ scale: 1.2 }}
-                      whileTap={{ scale: 0.9 }}
-                    >
-                      <Play className="w-12 h-12 text-white" />
-                    </motion.div>
-                  </div>
+                  >
+                    <source src={example.video} type="video/mp4" />
+                  </video>
                 </motion.div>
               </motion.div>
             ))}
