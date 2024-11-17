@@ -1,16 +1,36 @@
-import React, { useState, useEffect } from "react"
-import { Upload, X } from "lucide-react"
-import { motion, AnimatePresence } from "framer-motion"
-import { fal } from "@fal-ai/client"
+import React, { useState, useEffect, useCallback } from "react";
+import { Upload, X, Download, Share2 } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
+import { fal } from "@fal-ai/client";
+import { v4 as uuidv4 } from 'uuid';
 
 // Configure fal client
 fal.config({
-  credentials: import.meta.env.VITE_FAL_KEY
+  credentials: import.meta.env.VITE_FAL_KEY,
 });
 
+// Types
+interface GenerationState {
+  id: string;
+  status: 'pending' | 'completed' | 'error';
+  progress: string;
+  videoUrl: string | null;
+  timestamp: number;
+  uploadMode: 'solo' | 'couple';
+  images: {
+    solo1?: string;
+    solo2?: string;
+    couple?: string;
+    stitched?: string;
+  };
+}
 
+const STORAGE_KEY = 'video_generation_state';
+const NOTIFICATION_SOUND = '/notification.mp3';
+const ESTIMATED_GENERATION_TIME = 400; // seconds
 
 const UploadSection = () => {
+  // State Management
   const [uploadMode, setUploadMode] = useState<'solo' | 'couple'>('solo');
   const [soloPhoto1, setSoloPhoto1] = useState<string | null>(null);
   const [soloPhoto2, setSoloPhoto2] = useState<string | null>(null);
@@ -19,14 +39,117 @@ const UploadSection = () => {
   const [loading, setLoading] = useState(false);
   const [generatedVideo, setGeneratedVideo] = useState<string | null>(null);
   const [progress, setProgress] = useState<string>("");
+  const [generationId, setGenerationId] = useState<string | null>(null);
+  const [notificationPermission, setNotificationPermission] = useState<NotificationState>('default');
+  const [showEstimatedTime, setShowEstimatedTime] = useState(false);
+  
+  // Initialize notification sound
+  const notificationSound = new Audio(NOTIFICATION_SOUND);
 
-  // Stitch images when both solo photos are uploaded
-  useEffect(() => {
-    if (soloPhoto1 && soloPhoto2) {
-      stitchImages(soloPhoto1, soloPhoto2);
+  // Notification Management
+  const requestNotificationPermission = async () => {
+    if (!("Notification" in window)) return;
+    
+    try {
+      const permission = await Notification.requestPermission();
+      setNotificationPermission(permission);
+    } catch (error) {
+      console.error("Error requesting notification permission:", error);
     }
-  }, [soloPhoto1, soloPhoto2]);
+  };
 
+  const sendNotification = useCallback((title: string, body: string) => {
+    if (Notification.permission === "granted") {
+      try {
+        const notification = new Notification(title, {
+          body,
+          icon: "/icon.png",
+          badge: "/icon.png",
+          vibrate: [200, 100, 200],
+        });
+
+        notificationSound.play().catch(console.error);
+        
+        notification.onclick = () => {
+          window.focus();
+          notification.close();
+        };
+      } catch (error) {
+        console.error("Error sending notification:", error);
+      }
+    }
+  }, []);
+
+  // Local Storage Management
+  const saveGenerationState = (state: GenerationState) => {
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+    } catch (error) {
+      console.error("Error saving generation state:", error);
+    }
+  };
+
+  const loadGenerationState = (): GenerationState | null => {
+    try {
+      const saved = localStorage.getItem(STORAGE_KEY);
+      return saved ? JSON.parse(saved) : null;
+    } catch (error) {
+      console.error("Error loading generation state:", error);
+      return null;
+    }
+  };
+
+  // Video Download Handler
+  const handleDownload = async () => {
+    if (!generatedVideo) return;
+    
+    try {
+      const response = await fetch(generatedVideo);
+      const blob = await response.blob();
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `generated-video-${Date.now()}.mp4`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      window.URL.revokeObjectURL(url);
+    } catch (error) {
+      console.error('Error downloading video:', error);
+      alert('Failed to download video. Please try again.');
+    }
+  };
+
+  // Video Share Handler
+  const handleShare = async () => {
+    if (!generatedVideo) return;
+    
+    if (navigator.share) {
+      try {
+        await navigator.share({
+          title: 'My Generated Video',
+          text: 'Check out this amazing video I created!',
+          url: generatedVideo
+        });
+      } catch (error) {
+        if ((error as Error).name !== 'AbortError') {
+          console.error('Error sharing:', error);
+          await navigator.clipboard.writeText(generatedVideo);
+          alert('Video URL copied to clipboard!');
+        }
+      }
+    } else {
+      try {
+        await navigator.clipboard.writeText(generatedVideo);
+        alert('Video URL copied to clipboard!');
+      } catch (error) {
+        console.error('Error copying to clipboard:', error);
+        alert('Failed to copy video URL. Please try again.');
+      }
+    }
+  };
+
+  // Image Processing
   const stitchImages = (img1Src: string, img2Src: string) => {
     const img1 = new Image();
     const img2 = new Image();
@@ -53,31 +176,33 @@ const UploadSection = () => {
     img1.src = img1Src;
   };
 
+  // File Upload Handler
   const handleFileUpload = (
     e: React.ChangeEvent<HTMLInputElement>,
     target: 'solo1' | 'solo2' | 'couple'
   ) => {
     const file = e.target.files?.[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        const imageUrl = reader.result as string;
-        switch (target) {
-          case 'solo1':
-            setSoloPhoto1(imageUrl);
-            break;
-          case 'solo2':
-            setSoloPhoto2(imageUrl);
-            break;
-          case 'couple':
-            setCouplePhoto(imageUrl);
-            break;
-        }
-      };
-      reader.readAsDataURL(file);
-    }
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      const imageUrl = reader.result as string;
+      switch (target) {
+        case 'solo1':
+          setSoloPhoto1(imageUrl);
+          break;
+        case 'solo2':
+          setSoloPhoto2(imageUrl);
+          break;
+        case 'couple':
+          setCouplePhoto(imageUrl);
+          break;
+      }
+    };
+    reader.readAsDataURL(file);
   };
 
+  // Clear Photo Handler
   const clearPhoto = (target: 'solo1' | 'solo2' | 'couple') => {
     switch (target) {
       case 'solo1':
@@ -93,14 +218,105 @@ const UploadSection = () => {
     setGeneratedVideo(null);
     setProgress("");
     setStitchedImage(null);
+    localStorage.removeItem(STORAGE_KEY);
   };
 
+  // Generation Status Polling
+  const pollGenerationStatus = async (imageUrl: string, genId: string) => {
+    try {
+      const result = await fal.subscribe("fal-ai/minimax-video/image-to-video", {
+        input: {
+          prompt: "two people kissing each other",
+          image_url: imageUrl,
+          prompt_optimizer: true
+        },
+        logs: true,
+        onQueueUpdate: (update) => {
+          if (update.status === "IN_PROGRESS") {
+            const lastLog = update.logs[update.logs.length - 1]?.message;
+            if (lastLog) {
+              setProgress(lastLog);
+              saveGenerationState({
+                id: genId,
+                status: 'pending',
+                progress: lastLog,
+                videoUrl: null,
+                timestamp: Date.now(),
+                uploadMode,
+                images: {
+                  solo1: soloPhoto1 || undefined,
+                  solo2: soloPhoto2 || undefined,
+                  couple: couplePhoto || undefined,
+                  stitched: stitchedImage || undefined
+                }
+              });
+            }
+          }
+        },
+      });
+
+      if (result.data.video?.url) {
+        setGeneratedVideo(result.data.video.url);
+        setProgress("");
+        setLoading(false);
+        setShowEstimatedTime(false);
+        
+        saveGenerationState({
+          id: genId,
+          status: 'completed',
+          progress: '',
+          videoUrl: result.data.video.url,
+          timestamp: Date.now(),
+          uploadMode,
+          images: {
+            solo1: soloPhoto1 || undefined,
+            solo2: soloPhoto2 || undefined,
+            couple: couplePhoto || undefined,
+            stitched: stitchedImage || undefined
+          }
+        });
+
+        sendNotification(
+          '🎉 Video Generation Complete!',
+          'Your video is ready to view. Click to check it out!'
+        );
+      }
+    } catch (error) {
+      console.error("Error during generation:", error);
+      setProgress("Error generating video. Please try again.");
+      setLoading(false);
+      setShowEstimatedTime(false);
+      
+      saveGenerationState({
+        id: genId,
+        status: 'error',
+        progress: 'Generation failed',
+        videoUrl: null,
+        timestamp: Date.now(),
+        uploadMode,
+        images: {
+          solo1: soloPhoto1 || undefined,
+          solo2: soloPhoto2 || undefined,
+          couple: couplePhoto || undefined,
+          stitched: stitchedImage || undefined
+        }
+      });
+    }
+  };
+
+  // Generate Video Handler
   const handleGenerate = async () => {
     const imageToProcess = uploadMode === 'couple' ? couplePhoto : stitchedImage;
     if (!imageToProcess) return;
 
+    await requestNotificationPermission();
+    
     setLoading(true);
-    setProgress("Uploading image...");
+    setShowEstimatedTime(true);
+    setProgress("Preparing for video generation...");
+    
+    const newGenerationId = uuidv4();
+    setGenerationId(newGenerationId);
 
     try {
       const imageFile = await fetch(imageToProcess)
@@ -109,34 +325,65 @@ const UploadSection = () => {
       
       const uploadedImageUrl = await fal.storage.upload(imageFile);
       
-      setProgress("Generating video...");
+      setProgress("Video generation started - estimated time: ~7 minutes");
       
-      const result = await fal.subscribe("fal-ai/minimax-video/image-to-video", {
-        input: {
-          prompt: "two people kissing each other",
-          image_url: uploadedImageUrl,
-          prompt_optimizer: true
-        },
-        logs: true,
-        onQueueUpdate: (update) => {
-          if (update.status === "IN_PROGRESS") {
-            const lastLog = update.logs[update.logs.length - 1]?.message;
-            if (lastLog) setProgress(lastLog);
-          }
-        },
+      saveGenerationState({
+        id: newGenerationId,
+        status: 'pending',
+        progress: 'Generation started',
+        videoUrl: null,
+        timestamp: Date.now(),
+        uploadMode,
+        images: {
+          solo1: soloPhoto1 || undefined,
+          solo2: soloPhoto2 || undefined,
+          couple: couplePhoto || undefined,
+          stitched: stitchedImage || undefined
+        }
       });
 
-      if (result.data.video?.url) {
-        setGeneratedVideo(result.data.video.url);
-        setProgress("");
-      }
+      pollGenerationStatus(uploadedImageUrl, newGenerationId);
     } catch (error) {
-      console.error("Error generating video:", error);
-      setProgress("Error generating video. Please try again.");
-    } finally {
+      console.error("Error initiating generation:", error);
+      setProgress("Failed to start video generation. Please try again.");
       setLoading(false);
+      setShowEstimatedTime(false);
     }
   };
+
+  // Effect for image stitching
+  useEffect(() => {
+    if (soloPhoto1 && soloPhoto2) {
+      stitchImages(soloPhoto1, soloPhoto2);
+    }
+  }, [soloPhoto1, soloPhoto2]);
+
+  // Effect for restoring state on mount
+  useEffect(() => {
+    const savedState = loadGenerationState();
+    if (savedState && savedState.status === 'pending') {
+      setGenerationId(savedState.id);
+      setLoading(true);
+      setProgress(savedState.progress);
+      setUploadMode(savedState.uploadMode);
+      setShowEstimatedTime(true);
+      
+      if (savedState.images) {
+        if (savedState.uploadMode === 'solo') {
+          setSoloPhoto1(savedState.images.solo1 || null);
+          setSoloPhoto2(savedState.images.solo2 || null);
+          setStitchedImage(savedState.images.stitched || null);
+        } else {
+          setCouplePhoto(savedState.images.couple || null);
+        }
+      }
+
+      // Resume polling if generation was in progress
+      if (savedState.id) {
+        pollGenerationStatus(savedState.id, savedState.id);
+      }
+    }
+  }, []);
 
   const isGenerateEnabled = uploadMode === 'couple' 
     ? couplePhoto !== null 
@@ -146,50 +393,51 @@ const UploadSection = () => {
     <motion.section
       initial={{ opacity: 0, y: 20 }}
       whileInView={{ opacity: 1, y: 0 }}
-      transition={{ duration: 2 }}
+      transition={{ duration: 0.5 }}
       viewport={{ once: true }}
       className="bg-gray-50 pt-16 pb-8 px-6 rounded-3xl"
     >
       <div className="max-w-xl mx-auto">
-        <motion.div 
+        {/* Upload Mode Selection */}
+        <motion.div
           initial={{ opacity: 0, y: -20 }}
-          whileInView={{ opacity: 1, x: 0 }}
-          transition={{ delay: 0.2, duration:1 }}
-          viewport={{ once: true }}
-          className="mb-6"
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.2 }}
+          className="mb-8"
         >
-          <h2 className="text-xl font-semibold mb-6">Photo type to upload</h2>
+          <h2 className="text-xl font-semibold mb-4">Choose Upload Type</h2>
           <div className="flex gap-4">
             <motion.button
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
               onClick={() => setUploadMode('solo')}
-              className={`relative flex items-center gap-2 px-2 py-3 rounded-xl flex-1 ${
+              className={`flex-1 py-3 px-4 rounded-xl flex items-center justify-center gap-2 ${
                 uploadMode === 'solo'
-                  ? 'gradient-border-active'
-                  : 'bg-gray-100 border border-gray-200'
+                  ? 'bg-gradient-to-r from-purple-500 via-pink-500 to-orange-500 text-white'
+                  : 'bg-white border border-gray-200'
               }`}
             >
-              <img src="/soloicon.svg" alt="" className="w-6 h-6" />
-              <span className="font-semibold text-sm">2 Solo Photos</span>
+              <Upload className="w-5 h-5" />
+              Solo Photos
             </motion.button>
 
             <motion.button
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
               onClick={() => setUploadMode('couple')}
-              className={`relative flex items-center gap-2 px-2 py-2 rounded-xl flex-1 ${
+              className={`flex-1 py-3 px-4 rounded-xl flex items-center justify-center gap-2 ${
                 uploadMode === 'couple'
-                  ? 'gradient-border-active'
-                  : 'bg-gray-100 border border-gray-200'
+                  ? 'bg-gradient-to-r from-purple-500 via-pink-500 to-orange-500 text-white'
+                  : 'bg-white border border-gray-200'
               }`}
             >
-              <img src="/coupleicon.svg" alt="" className="w-6 h-6" />
-              <span className="font-semibold text-sm">1 Couple Photo</span>
+              <Upload className="w-5 h-5" />
+              Couple Photo
             </motion.button>
           </div>
         </motion.div>
 
+{/* Photo Upload Section */}
         <AnimatePresence mode="wait">
           {uploadMode === 'solo' ? (
             <motion.div
@@ -201,18 +449,17 @@ const UploadSection = () => {
             >
               {/* Solo Photo Uploads */}
               {[
-                { state: soloPhoto1, setState: setSoloPhoto1, id: 'solo1', label: 'first' },
-                { state: soloPhoto2, setState: setSoloPhoto2, id: 'solo2', label: 'second' }
-              ].map((photo, index) => (
+                { state: soloPhoto1, id: 'solo1', label: 'First Person' },
+                { state: soloPhoto2, id: 'solo2', label: 'Second Person' }
+              ].map((photo) => (
                 <motion.div 
                   key={photo.id}
                   className="relative"
                   whileHover={{ scale: 1.02 }}
                 >
-                  <div className="absolute -inset-[1px] rounded-2xl opacity-80" />
                   <label
                     htmlFor={photo.id}
-                    className="relative block bg-white rounded-2xl border-2 border-dashed border-gray-200 cursor-pointer overflow-hidden"
+                    className="block bg-white rounded-2xl border-2 border-dashed border-gray-200 cursor-pointer overflow-hidden"
                   >
                     <input
                       type="file"
@@ -231,7 +478,7 @@ const UploadSection = () => {
                         >
                           <img 
                             src={photo.state} 
-                            alt={`Person ${index + 1}`} 
+                            alt={photo.label} 
                             className="w-full h-[200px] object-cover"
                           />
                           <motion.button
@@ -241,7 +488,7 @@ const UploadSection = () => {
                               e.preventDefault();
                               clearPhoto(photo.id as 'solo1' | 'solo2');
                             }}
-                            className="absolute top-2 right-2 p-1 bg-white rounded-full shadow-lg"
+                            className="absolute top-2 right-2 p-1.5 bg-white rounded-full shadow-lg"
                           >
                             <X className="w-4 h-4 text-gray-500" />
                           </motion.button>
@@ -251,11 +498,11 @@ const UploadSection = () => {
                           initial={{ opacity: 0 }}
                           animate={{ opacity: 1 }}
                           exit={{ opacity: 0 }}
-                          className="flex flex-col items-center justify-center p-8 min-h-[200px]"
+                          className="flex flex-col items-center justify-center p-8 h-[200px]"
                         >
                           <Upload className="w-8 h-8 text-gray-400 mb-2" />
                           <p className="text-gray-500 text-center text-sm">
-                            Upload {photo.label} photo
+                            Upload {photo.label}
                           </p>
                         </motion.div>
                       )}
@@ -264,18 +511,18 @@ const UploadSection = () => {
                 </motion.div>
               ))}
 
-              {/* Stitched Image Preview */}
+              {/* Stitched Preview */}
               {stitchedImage && (
                 <motion.div
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   className="col-span-2 mt-4"
                 >
-                  <h3 className="text-lg font-semibold mb-3">Stitched Preview</h3>
-                  <div className="rounded-2xl overflow-hidden">
+                  <h3 className="text-lg font-semibold mb-3">Preview</h3>
+                  <div className="rounded-2xl overflow-hidden bg-white shadow">
                     <img 
                       src={stitchedImage} 
-                      alt="Stitched preview" 
+                      alt="Combined preview" 
                       className="w-full object-contain"
                     />
                   </div>
@@ -295,14 +542,13 @@ const UploadSection = () => {
                 className="relative"
                 whileHover={{ scale: 1.02 }}
               >
-                <div className="absolute -inset-[1px] rounded-2xl opacity-80" />
                 <label
-                  htmlFor="couple-photo"
-                  className="relative block bg-white rounded-2xl border-2 border-dashed border-gray-200 cursor-pointer overflow-hidden"
+                  htmlFor="couple"
+                  className="block bg-white rounded-2xl border-2 border-dashed border-gray-200 cursor-pointer overflow-hidden"
                 >
                   <input
                     type="file"
-                    id="couple-photo"
+                    id="couple"
                     className="hidden"
                     accept="image/*"
                     onChange={(e) => handleFileUpload(e, 'couple')}
@@ -318,7 +564,7 @@ const UploadSection = () => {
                         <img 
                           src={couplePhoto} 
                           alt="Couple" 
-                          className="w-full h-[200px] object-cover"
+                          className="w-full h-[300px] object-cover"
                         />
                         <motion.button
                           whileHover={{ scale: 1.1 }}
@@ -327,7 +573,7 @@ const UploadSection = () => {
                             e.preventDefault();
                             clearPhoto('couple');
                           }}
-                          className="absolute top-2 right-2 p-1 bg-white rounded-full shadow-lg"
+                          className="absolute top-2 right-2 p-1.5 bg-white rounded-full shadow-lg"
                         >
                           <X className="w-4 h-4 text-gray-500" />
                         </motion.button>
@@ -337,7 +583,7 @@ const UploadSection = () => {
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
                         exit={{ opacity: 0 }}
-                        className="flex flex-col items-center justify-center p-8 min-h-[200px]"
+                        className="flex flex-col items-center justify-center p-8 h-[300px]"
                       >
                         <Upload className="w-8 h-8 text-gray-400 mb-2" />
                         <p className="text-gray-500 text-center text-sm">
@@ -352,69 +598,49 @@ const UploadSection = () => {
           )}
         </AnimatePresence>
 
-        {/* Generate Button */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.3 }}
-          viewport={{ once: true }}
-          className="mb-6"
+        {/* Generation Button */}
+        <motion.button
+          onClick={handleGenerate}
+          disabled={!isGenerateEnabled || loading}
+          whileHover={isGenerateEnabled ? { scale: 1.02 } : undefined}
+          whileTap={isGenerateEnabled ? { scale: 0.98 } : undefined}
+          className={`w-full py-4 rounded-full font-semibold text-white transition-all ${
+            isGenerateEnabled && !loading
+              ? 'bg-gradient-to-r from-purple-500 via-pink-500 to-orange-500 hover:opacity-90'
+              : 'bg-gray-300 cursor-not-allowed'
+          }`}
         >
-          <motion.button
-            onClick={handleGenerate}
-            disabled={!isGenerateEnabled || loading}
-            whileHover={{ scale: isGenerateEnabled ? 1.02 : 1 }}
-            whileTap={{ scale: isGenerateEnabled ? 0.98 : 1 }}
-            className={`w-full py-4 rounded-full font-bold text-white transition-all ${
-              isGenerateEnabled
-                ? 'bg-gradient-to-r from-purple-500 via-pink-500 to-orange-500 hover:opacity-90'
-                : 'bg-gray-300 cursor-not-allowed'
-            }`}
-          >
-            <AnimatePresence mode="wait">
-              {loading ? (
-                <motion.div
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  exit={{ opacity: 0 }}
-                  className="flex items-center justify-center"
-                >
-                  <svg 
-                    className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" 
-                    xmlns="http://www.w3.org/2000/svg" 
-                    fill="none" 
-                  viewBox="0 0 24 24"
-                  >
-                    <circle 
-                      className="opacity-25" 
-                      cx="12" 
-                      cy="12" 
-                      r="10" 
-                      stroke="currentColor" 
-                      strokeWidth="4"
-                    />
-                    <path 
-                      className="opacity-75" 
-                      fill="currentColor" 
-                      d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"
-                    />
-                  </svg>
-                  {progress || "Generating..."}
-                </motion.div>
-              ) : (
-                <motion.span
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  exit={{ opacity: 0 }}
-                >
-                  Generate Video
-                </motion.span>
-              )}
-            </AnimatePresence>
-          </motion.button>
-        </motion.div>
+          {loading ? (
+            <div className="flex items-center justify-center gap-2">
+              <svg className="animate-spin h-5 w-5 text-white" fill="none" viewBox="0 0 24 24">
+                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
+              </svg>
+              {progress || "Generating..."}
+            </div>
+          ) : (
+            "Generate Video"
+          )}
+        </motion.button>
 
-        {/* Generated Video Player */}
+        {/* Estimated Time Message */}
+        <AnimatePresence>
+          {showEstimatedTime && loading && (
+            <motion.div
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -10 }}
+              className="mt-6 p-4 bg-blue-50 rounded-xl"
+            >
+              <p className="text-blue-800 text-sm">
+                Video generation takes approximately 7 minutes. Feel free to take a break - 
+                we'll send you a notification when it's ready! ☕️
+              </p>
+            </motion.div>
+          )}
+        </AnimatePresence>
+
+        {/* Video Player and Controls */}
         <AnimatePresence>
           {generatedVideo && (
             <motion.div
@@ -423,7 +649,7 @@ const UploadSection = () => {
               exit={{ opacity: 0, y: -20 }}
               className="mt-8"
             >
-              <div className="relative rounded-2xl overflow-hidden bg-black">
+              <div className="rounded-2xl overflow-hidden bg-black shadow-lg">
                 <video
                   src={generatedVideo}
                   controls
@@ -433,51 +659,47 @@ const UploadSection = () => {
                   Your browser does not support the video tag.
                 </video>
               </div>
+
+              {/* Download and Share buttons */}
+              <div className="mt-4 grid grid-cols-2 gap-4">
+                <motion.button
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                  onClick={handleDownload}
+                  className="py-3 px-4 rounded-xl bg-gradient-to-r from-purple-500 to-pink-500 text-white font-semibold flex items-center justify-center gap-2"
+                >
+                  <Download className="w-5 h-5" />
+                  Download
+                </motion.button>
+
+                <motion.button
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                  onClick={handleShare}
+                  className="py-3 px-4 rounded-xl bg-gradient-to-r from-pink-500 to-orange-500 text-white font-semibold flex items-center justify-center gap-2"
+                >
+                  <Share2 className="w-5 h-5" />
+                  Share
+                </motion.button>
+              </div>
             </motion.div>
           )}
         </AnimatePresence>
 
-        {/* Status Messages */}
+        {/* Error Message */}
         <AnimatePresence>
-          {progress && !loading && (
+          {progress && !loading && progress.includes("Error") && (
             <motion.p
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -10 }}
-              className="text-sm text-orange-500 text-center mt-4"
+              className="mt-4 text-red-500 text-sm text-center"
             >
               {progress}
             </motion.p>
           )}
         </AnimatePresence>
       </div>
-
-      {/* Gradient border styles */}
-      <style jsx>{`
-        .gradient-border-active {
-          background: white;
-          position: relative;
-          z-index: 0;
-        }
-        
-        .gradient-border-active::before {
-          content: '';
-          position: absolute;
-          z-index: -1;
-          inset: -2.5px;
-          background: linear-gradient(90deg, #EC4899, #F97316);
-          border-radius: 20px;
-        }
-        
-        .gradient-border-active::after {
-          content: '';
-          position: absolute;
-          z-index: -1;
-          inset: 0;
-          background: white;
-          border-radius: 20px;
-        }
-      `}</style>
     </motion.section>
   );
 };
